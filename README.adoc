@@ -69,6 +69,7 @@ WARNING: The following example shows the use of several different types of regis
 clientDependencies {
     bower {
         'jquery'('2.0.0') // <1>
+    	bowerFile "path/to/bower.json" // <1.1>
     }
     npm {
         'bootstrap'('3.3.6', exclude: 'jquery') // <2>
@@ -85,6 +86,7 @@ clientDependencies {
 }
 ----
 <1> Installs jquery from bower and into the location (`src/assets/vendor/jquery`) using the default copy settings
+<1.1> Uses dependencies from bower file
 <2> Installs bootstrap from npm and excludes the dependency `jquery`
 <3> Installs restangular from npm but doesn't include any child dependencies
 <4> Changing the destination path using the `into` property. This is relative to the install path meaning this would install to the

@@ -17,6 +17,9 @@ package com.craigburke.gradle.client.plugin
 
 import com.craigburke.gradle.client.dependency.Dependency
 import com.craigburke.gradle.client.registry.core.Registry
+import groovy.json.JsonException
+import groovy.json.JsonSlurper
+import org.gradle.api.GradleException
 
 /**
  *
@@ -28,6 +31,7 @@ class DependencyBuilder {
 
     Registry registry
     List<Dependency> rootDependencies = []
+    private final JsonSlurper json = new JsonSlurper()
 
     DependencyBuilder(Registry registry) {
         this.registry = registry
@@ -53,4 +57,33 @@ class DependencyBuilder {
         rootDependencies += dependency
     }
 
+	def bowerFile(arg) {
+		switch (arg) {
+			case File:
+				if (!arg.exists()) {
+					throw new GradleException("Can't find bower file \"$arg.absolutePath\"")
+				}
+
+				parseBowerFile(arg).dependencies.each { name, version ->
+					methodMissing(name as String, [version])
+				}
+				break
+			case String: bowerFile(new File(arg as String))
+				break
+			default:
+				throw new GradleException("Cannot invoke \"bowerFile\" for param: \"$arg\"")
+		}
+	}
+
+	private Map parseBowerFile(File arg) {
+		try {
+			def bowerFile = this.json.parse(arg as File)
+			if (!bowerFile?.dependencies) {
+				throw new GradleException("Bower file \"$arg.absolutePath\" does not have \"dependencies\" section!")
+			}
+			bowerFile as Map
+		} catch (JsonException ex) {
+			throw new GradleException("Can't parse bower file \"$arg.absolutePath\"", ex)
+		}
+	}
 }
