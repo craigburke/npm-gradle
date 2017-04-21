@@ -1,9 +1,9 @@
 package com.craigburke.gradle.client.registry
 
-import com.craigburke.gradle.client.dependency.Dependency
-import com.craigburke.gradle.client.registry.bower.BowerRegistry
-import com.craigburke.gradle.client.registry.bower.GitResolver
-import com.craigburke.gradle.client.registry.bower.GithubResolver
+import com.craigburke.clientdependencies.api.dependency.Dependency
+import com.craigburke.clientdependencies.api.registry.bower.BowerRegistry
+import com.craigburke.clientdependencies.api.registry.bower.GitResolver
+import com.craigburke.clientdependencies.api.registry.bower.GithubResolver
 import org.ajoberstar.grgit.Grgit
 import spock.lang.Unroll
 

@@ -1,8 +1,8 @@
-package com.craigburke.gradle.client.registry.bower
+package com.craigburke.clientdependencies.api.registry.bower
 
-import com.craigburke.gradle.client.dependency.Dependency
-import com.craigburke.gradle.client.dependency.Version
-import com.craigburke.gradle.client.registry.core.Resolver
+import com.craigburke.clientdependencies.api.dependency.Dependency
+import com.craigburke.clientdependencies.api.dependency.Version
+import com.craigburke.clientdependencies.api.registry.core.Resolver
 import org.ajoberstar.grgit.Grgit
 import org.ajoberstar.grgit.operation.ResetOp
 import org.eclipse.jgit.storage.file.WindowCacheConfig

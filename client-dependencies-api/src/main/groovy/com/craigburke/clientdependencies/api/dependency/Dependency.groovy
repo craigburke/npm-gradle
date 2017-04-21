@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.craigburke.gradle.client.dependency
+package com.craigburke.clientdependencies.api.dependency
 
-import com.craigburke.gradle.client.registry.core.Registry
-import com.craigburke.gradle.client.registry.core.RegistryUtil
+import com.craigburke.clientdependencies.api.registry.core.Registry
+import com.craigburke.clientdependencies.api.registry.core.RegistryUtil
 import groovy.transform.CompileStatic
 import java.util.regex.Pattern
 

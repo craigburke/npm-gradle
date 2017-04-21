@@ -1,6 +1,6 @@
 package com.craigburke.gradle.client.registry
 
-import com.craigburke.gradle.client.registry.core.AbstractRegistry
+import com.craigburke.clientdependencies.api.registry.core.AbstractRegistry
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll

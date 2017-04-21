@@ -1,19 +1,18 @@
 import groovy.io.FileType
 
 dependencies {
+    compile gradleApi()
     compile( project(":client-dependencies-api") )
     testCompile('org.spockframework:spock-core:1.0-groovy-2.3') {
         exclude module: 'groovy-all'
     }
     testCompile 'com.github.tomakehurst:wiremock:1.58:standalone'
+
 }
 
 
 
-codenarc {
-    toolVersion = '0.25.1'
-    configFile = file("${rootProject.projectDir}/config/codenarc/rules.groovy")
-}
+
 task fixResourcePaths() {
     doLast {
         List<File> gitFolders = []

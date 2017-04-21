@@ -15,15 +15,10 @@
  */
 package com.craigburke.gradle.client.plugin
 
-import com.craigburke.gradle.client.dependency.Dependency
-import com.craigburke.gradle.client.registry.bower.BowerRegistry
-import com.craigburke.gradle.client.registry.npm.NpmRegistry
-import com.craigburke.gradle.client.registry.core.Registry
-import com.craigburke.gradle.client.registry.npm.YarnRegistry
-import org.gradle.api.GradleException
+import com.craigburke.clientdependencies.api.config.ClientDependenciesConfig
+import com.craigburke.clientdependencies.api.registry.core.Registry
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
-import org.gradle.util.CollectionUtils
 
 /**
  *
@@ -35,151 +30,105 @@ class ClientDependenciesExtension {
 
     Project project
 
+    ClientDependenciesConfig config
     int threadPoolSize = 15
-    List<Registry> registries = []
-    List<Dependency> rootDependencies = []
-
-    boolean useGlobalCache = true
-    boolean checkDownloads = true
-
-    String githubUsername
-    String githubPassword
-    String githubToken
-    String userAgent = 'client-dependencies-gradle'
-
-    private Object installDir
-    private Object cacheDir
-
-    private final List<Object> fileExtensions = ['css', 'js', 'eot', 'svg', 'ttf', 'woff', 'woff2', 'ts',
-                                                 'jpg', 'jpeg', 'png', 'gif']
-
-    private final List<Object> releaseFolders = ['dist', 'release']
-
-    private final List<Object> copyIncludes = []
-    private final List<Object> copyExcludes = ['**/*.min.js', '**/*.min.css', '**/*.map', '**/Gruntfile.js',
-                                 'gulpfile.js', 'source/**']
-
-    Closure defaultCopy
 
     ClientDependenciesExtension(Project project) {
         this.project = project
+        this.config = new ClientDependenciesConfig(Logging.getLogger(ClientDependenciesExtension))
     }
 
     void setFileExtensions(Object... extensions) {
-        this.fileExtensions.clear()
-        this.fileExtensions.addAll(extensions)
+        config.setFileExtensions(extensions)
     }
 
     void fileExtensions(Object... extensions) {
-        this.fileExtensions.addAll(extensions)
+        config.addFileExtensions(extensions)
     }
 
     List<String> getFileExtensions() {
-        CollectionUtils.stringize(this.fileExtensions)
+        config.getFileExtensions()
     }
 
     void setReleaseFolders(Object... extensions) {
-        this.releaseFolders.clear()
-        this.releaseFolders.addAll(extensions)
+        config.setReleaseFolders(extensions)
     }
 
     void releaseFolders(Object... extensions) {
-        this.releaseFolders.addAll(extensions)
+        config.addReleaseFolders(extensions)
     }
 
     List<String> getCopyIncludes() {
-        CollectionUtils.stringize(this.copyIncludes)
+        config.getCopyIncludes()
     }
 
     void setCopyIncludes(Object... includes) {
-        this.copyIncludes.clear()
-        this.copyIncludes.addAll(includes)
+        config.setCopyIncludes(includes)
     }
 
     void copyIncludes(Object... includes) {
-        this.copyIncludes.addAll(includes)
+        config.addCopyIncludes(includes)
     }
 
     List<String> getCopyExcludes() {
-        CollectionUtils.stringize(this.copyExcludes)
+        config.getCopyExcludes()
     }
 
     void setCopyExcludes(Object... includes) {
-        this.copyExcludes.clear()
-        this.copyExcludes.addAll(includes)
+        config.setCopyExcludes(includes)
     }
 
     void copyExcludes(Object... includes) {
-        this.copyExcludes.addAll(includes)
+        config.addCopyExcludes(includes)
     }
 
     List<String> getReleaseFolders() {
-        CollectionUtils.stringize(this.releaseFolders)
+        config.getReleaseFolders()
     }
 
     void setInstallDir(Object installDir) {
-        this.installDir = installDir
+        File realDir = null
+        if ( installDir instanceof String) {
+            realDir = new File(installDir)
+        }
+        else if ( installDir instanceof File) {
+            realDir = installDir
+        }
+        config.installDir = realDir
     }
 
     File getInstallDir() {
-        this.installDir ? project.file(this.installDir) : null
+        config.installDir
     }
 
     void setCacheDir(Object cacheDir) {
-        this.cacheDir = cacheDir
+        File realDir = null
+        if ( cacheDir instanceof String) {
+            realDir = new File(cacheDir)
+        }
+        else if ( cacheDir instanceof File) {
+            realDir = cacheDir
+        }
+        config.cacheDir = realDir
     }
 
     File getCacheDir() {
-        this.cacheDir ? project.file(this.cacheDir) : null
+        config.getCacheDir
     }
 
     def methodMissing(String registryName, args) {
-       if (args && args.last() instanceof Closure) {
-           Registry registry = findRegistry(registryName)
-           DependencyBuilder dependencyBuilder = new DependencyBuilder(registry)
-           Closure clonedClosure = args.last().rehydrate(dependencyBuilder, this, this)
-           clonedClosure.resolveStrategy = Closure.DELEGATE_FIRST
-           clonedClosure()
-           rootDependencies += dependencyBuilder.rootDependencies
-       }
+        config.methodMissing( registryName, args )
     }
 
     void registry(Map props = [:], String name) {
-        String url = props.url as String
-        Registry registry
-        switch (props.type) {
-            case 'bower':
-                registry = new BowerRegistry(name, Logging.getLogger(ClientDependenciesPlugin), url)
-                break
-            case 'npm':
-                registry = new NpmRegistry(name, Logging.getLogger(ClientDependenciesPlugin), url)
-                break
-            case 'yarn':
-                registry = new YarnRegistry(name, Logging.getLogger(ClientDependenciesPlugin), url)
-                break
-            default:
-                throw new GradleException("Unknown Registry: $name")
-        }
-        registry.githubUsername = githubUsername
-        registry.githubPassword = githubPassword
-        registry.githubToken = githubToken
-        registries += registry
+        config.registry( props, name )
     }
 
     Registry findRegistry(String name) {
-        registries.find { it.name == name  }
+        config.findRegistry( name )
     }
 
     Closure getCopyConfig() {
-        if (defaultCopy) {
-            return defaultCopy
-        }
-
-        List<String> includes = fileExtensions.collect { "**/*.${it}" } + copyIncludes
-
-        return {
-            exclude copyExcludes
-            include includes
-        }
+        config.copyConfig
     }
 }

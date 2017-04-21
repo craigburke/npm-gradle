@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.craigburke.gradle.client.registry.bower
+package com.craigburke.clientdependencies.api.registry.bower
 
+import static com.craigburke.clientdependencies.api.registry.core.RegistryUtil.getMD5Hash
+
+import com.craigburke.clientdependencies.api.dependency.Dependency
+import com.craigburke.clientdependencies.api.dependency.SimpleDependency
+import com.craigburke.clientdependencies.api.registry.core.AbstractRegistry
+import com.craigburke.clientdependencies.api.registry.core.Registry
+import groovy.json.JsonSlurper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import static com.craigburke.gradle.client.registry.core.RegistryUtil.getMD5Hash
-
-import com.craigburke.gradle.client.dependency.SimpleDependency
-import com.craigburke.gradle.client.registry.core.Registry
-import com.craigburke.gradle.client.registry.core.AbstractRegistry
-import com.craigburke.gradle.client.dependency.Dependency
-import groovy.json.JsonSlurper
 
 /**
  *
@@ -37,12 +36,11 @@ class BowerRegistry extends AbstractRegistry implements Registry {
     static final String DEFAULT_BOWER_URL = 'https://bower.herokuapp.com'
     static final List<String> DEFAULT_BOWER_FILENAMES = ['bower.json', '.bower.json']
 
-    static final Logger logger = LoggerFactory.getLogger(BowerRegistry.name)
-    BowerRegistry(String name, String url = DEFAULT_BOWER_URL, List<String> configFilenames = DEFAULT_BOWER_FILENAMES) {
-        this(name,url,configFilenames)
-    }
-    BowerRegistry(String name, Logger logger, String url = DEFAULT_BOWER_URL, List<String> configFilenames = DEFAULT_BOWER_FILENAMES) {
-        super(name, logger, url, configFilenames, [GithubResolver, GitResolver])
+    static final Logger LOGGER = LoggerFactory.getLogger(BowerRegistry.name)
+
+    BowerRegistry(String name = 'bower', Logger logger = null,
+                  String url = DEFAULT_BOWER_URL, List<String> configFilenames = DEFAULT_BOWER_FILENAMES) {
+        super(name, logger ?: BowerRegistry.LOGGER, url, configFilenames, [GithubResolver, GitResolver])
     }
 
     @Override
@@ -75,8 +73,7 @@ class BowerRegistry extends AbstractRegistry implements Registry {
                 fileset(dir: cacheFolder.absolutePath)
             }
             true
-        }
-        else {
+        } else {
             false
         }
     }
@@ -89,8 +86,7 @@ class BowerRegistry extends AbstractRegistry implements Registry {
                 .find { File file -> file.name.startsWith("${dependency.name}_") }
         if (cacheFile) {
             new JsonSlurper().parse(cacheFile) as Map
-        }
-        else {
+        } else {
             null
         }
     }

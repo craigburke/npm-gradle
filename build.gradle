@@ -27,10 +27,7 @@ subprojects{
     apply plugin: 'idea'
     apply plugin: 'com.gradle.plugin-publish'
     apply plugin: 'com.jfrog.bintray'
-    
-    if(it.name == 'client-dependencies'){
-        apply plugin: 'codenarc'
-    }
+    apply plugin: 'codenarc'
 
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
@@ -78,7 +75,10 @@ subprojects{
             }
         }
     }
-
+    codenarc {
+        toolVersion = '0.25.1'
+        configFile = file("${rootProject.projectDir}/config/codenarc/rules.groovy")
+    }
     bintray {
         user = project.hasProperty('bintrayUsername') ? project.bintrayUsername : ''
         key = project.hasProperty('bintrayApiKey') ? project.bintrayApiKey : ''

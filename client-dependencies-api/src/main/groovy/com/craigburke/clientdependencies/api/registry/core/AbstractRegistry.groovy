@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.craigburke.gradle.client.registry.core
+package com.craigburke.clientdependencies.api.registry.core
 
-import org.slf4j.Logger
-
-import static com.craigburke.gradle.client.registry.core.RegistryUtil.withLock
+import static RegistryUtil.withLock
 import static groovyx.gpars.GParsPool.withExistingPool
 
-import com.craigburke.gradle.client.dependency.SimpleDependency
-import com.craigburke.gradle.client.dependency.Dependency
-import com.craigburke.gradle.client.dependency.Version
-import com.craigburke.gradle.client.dependency.VersionResolver
+import com.craigburke.clientdependencies.api.dependency.Dependency
+import com.craigburke.clientdependencies.api.dependency.SimpleDependency
+import com.craigburke.clientdependencies.api.dependency.Version
+import com.craigburke.clientdependencies.api.dependency.VersionResolver
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import jsr166y.ForkJoinPool
+import org.slf4j.Logger
 
 /**
  *
@@ -39,7 +38,7 @@ abstract class AbstractRegistry implements Registry {
 
     String name
     String url
-    boolean offline
+    Boolean offline
     File localCacheDir
     File globalCacheDir
     File installDir
@@ -64,6 +63,7 @@ abstract class AbstractRegistry implements Registry {
                                List<Class<Resolver>> resolvers) {
         this.name = name
         this.url = url
+        this.log = log
         this.resolvers = resolvers.collect { it.newInstance(log) as Resolver }
         this.configFilenames = configFilenames
     }
@@ -103,8 +103,7 @@ abstract class AbstractRegistry implements Registry {
 
         if (declaredDependency.fullUrl) {
             dependency.version = Version.parse(declaredDependency.versionExpression)
-        }
-        else {
+        } else {
             List<Version> versionList = resolver.getVersionList(dependency)
             dependency.version = VersionResolver.resolve(declaredDependency.versionExpression, versionList)
         }
@@ -169,8 +168,7 @@ abstract class AbstractRegistry implements Registry {
         File infoFile = getInfoFile(dependency)
         if (infoFile.exists() && !infoFile.directory) {
             new JsonSlurper().parse(infoFile) as Map
-        }
-        else {
+        } else {
             null
         }
     }
@@ -178,19 +176,18 @@ abstract class AbstractRegistry implements Registry {
     protected List<Dependency> loadChildDependencies(Dependency dependency, List<String> exclusions) {
         withExistingPool(pool) {
             getChildDependencies(dependency)
-                .findAll { SimpleDependency child -> !exclusions.contains(child.name) }
-                .collectParallel { SimpleDependency child ->
-                    if (dependency.ancestorsAndSelf*.name.contains(child.name)) {
-                        null
-                    }
-                    else {
-                        Dependency childDependency = new Dependency(
-                                name: child.name,
-                                versionExpression: child.versionExpression,
-                                exclude: exclusions
-                        )
-                        loadDependency(childDependency, dependency)
-                    }
+                    .findAll { SimpleDependency child -> !exclusions.contains(child.name) }
+                    .collectParallel { SimpleDependency child ->
+                if (dependency.ancestorsAndSelf*.name.contains(child.name)) {
+                    null
+                } else {
+                    Dependency childDependency = new Dependency(
+                            name: child.name,
+                            versionExpression: child.versionExpression,
+                            exclude: exclusions
+                    )
+                    loadDependency(childDependency, dependency)
+                }
             }
             .findAllParallel { it != null }
         } as List<Dependency>
@@ -207,14 +204,16 @@ abstract class AbstractRegistry implements Registry {
         if (configFile?.exists()) {
             Map config = new JsonSlurper().parse(configFile) as Map
             config?.version ? Version.parse(config.version as String) : null
-        }
-        else {
+        } else {
             null
         }
     }
 
     abstract boolean loadSourceFromGlobalCache(Dependency dependency)
+
     abstract Map loadInfoFromGlobalCache(Dependency dependency)
+
     abstract Map loadInfoFromRegistry(Dependency dependency)
+
     abstract List<SimpleDependency> getChildDependencies(Dependency dependency)
 }

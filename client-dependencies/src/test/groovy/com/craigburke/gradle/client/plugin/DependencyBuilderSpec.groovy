@@ -1,6 +1,7 @@
 package com.craigburke.gradle.client.plugin
 
-import com.craigburke.gradle.client.dependency.Dependency
+import com.craigburke.clientdependencies.api.dependency.Dependency
+import com.craigburke.clientdependencies.api.dependency.DependencyBuilder
 import spock.lang.Specification
 import spock.lang.Subject
 

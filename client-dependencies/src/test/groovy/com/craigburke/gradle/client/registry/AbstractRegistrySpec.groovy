@@ -4,10 +4,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import static com.github.tomakehurst.wiremock.client.WireMock.get
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 
-import com.craigburke.gradle.client.registry.core.Registry
-import com.craigburke.gradle.client.registry.core.AbstractRegistry
+import com.craigburke.clientdependencies.api.registry.core.Registry
+import com.craigburke.clientdependencies.api.registry.core.AbstractRegistry
 
-import com.craigburke.gradle.client.dependency.Dependency
+import com.craigburke.clientdependencies.api.dependency.Dependency
 import com.github.tomakehurst.wiremock.WireMockServer
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder

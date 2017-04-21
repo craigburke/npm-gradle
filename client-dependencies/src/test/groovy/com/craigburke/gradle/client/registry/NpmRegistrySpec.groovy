@@ -1,8 +1,8 @@
 package com.craigburke.gradle.client.registry
 
-import com.craigburke.gradle.client.dependency.Dependency
-import com.craigburke.gradle.client.registry.core.DownloadVerifyException
-import com.craigburke.gradle.client.registry.npm.NpmRegistry
+import com.craigburke.clientdependencies.api.dependency.Dependency
+import com.craigburke.clientdependencies.api.registry.core.DownloadVerifyException
+import com.craigburke.clientdependencies.api.registry.npm.NpmRegistry
 import spock.lang.Unroll
 
 class NpmRegistrySpec extends AbstractRegistrySpec {

@@ -1,4 +1,4 @@
-package com.craigburke.gradle.client.dependency
+package com.craigburke.clientdependencies.api.dependency
 
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification

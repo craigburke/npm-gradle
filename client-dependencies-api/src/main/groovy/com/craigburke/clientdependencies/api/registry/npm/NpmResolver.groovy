@@ -1,14 +1,14 @@
-package com.craigburke.gradle.client.registry.npm
+package com.craigburke.clientdependencies.api.registry.npm
 
-import com.craigburke.gradle.client.dependency.Dependency
-import com.craigburke.gradle.client.dependency.Version
-import com.craigburke.gradle.client.registry.core.DownloadVerifyException
-import com.craigburke.gradle.client.registry.core.Resolver
+import static NpmUtil.extractTarball
+import static com.craigburke.clientdependencies.api.registry.core.RegistryUtil.getShaHash
+
+import com.craigburke.clientdependencies.api.dependency.Dependency
+import com.craigburke.clientdependencies.api.dependency.Version
+import com.craigburke.clientdependencies.api.registry.core.DownloadVerifyException
+import com.craigburke.clientdependencies.api.registry.core.Resolver
 import org.ajoberstar.grgit.Grgit
 import org.slf4j.Logger
-
-import static com.craigburke.gradle.client.registry.core.RegistryUtil.getShaHash
-import static com.craigburke.gradle.client.registry.npm.NpmUtil.extractTarball
 
 /**
  *

@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.craigburke.gradle.client.plugin
+package com.craigburke.clientdependencies.api.dependency
 
-import com.craigburke.gradle.client.dependency.Dependency
-import com.craigburke.gradle.client.registry.core.Registry
+import com.craigburke.clientdependencies.api.registry.core.Registry
 
 /**
  *

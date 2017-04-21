@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.craigburke.gradle.client.registry.npm
+package com.craigburke.clientdependencies.api.registry.npm
+
+import static NpmUtil.extractTarball
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import static com.craigburke.gradle.client.registry.npm.NpmUtil.extractTarball
-
-import com.craigburke.gradle.client.dependency.SimpleDependency
-import com.craigburke.gradle.client.registry.core.Registry
-import com.craigburke.gradle.client.registry.core.AbstractRegistry
-import com.craigburke.gradle.client.dependency.Dependency
+import com.craigburke.clientdependencies.api.dependency.SimpleDependency
+import com.craigburke.clientdependencies.api.registry.core.Registry
+import com.craigburke.clientdependencies.api.registry.core.AbstractRegistry
+import com.craigburke.clientdependencies.api.dependency.Dependency
 import groovy.json.JsonSlurper
 
 /**
@@ -36,14 +35,11 @@ class NpmRegistry extends AbstractRegistry implements Registry {
 
     static final String DEFAULT_NPM_URL = 'https://registry.npmjs.org'
     static final List<String> DEFAULT_NPM_FILENAMES = ['package.json']
-    static final Logger logger = LoggerFactory.getLogger(NpmRegistry.name)
-    
-    NpmRegistry(String name, String url = DEFAULT_NPM_URL, List<String> configFiles = DEFAULT_NPM_FILENAMES) {
-        this(name,logger,url,configFiles)
-    }
-    
-    NpmRegistry(String name, Logger logger, String url = DEFAULT_NPM_URL, List<String> configFiles = DEFAULT_NPM_FILENAMES) {
-        super(name,logger, url, configFiles, [NpmResolver])
+    static final Logger LOGGER = LoggerFactory.getLogger(NpmRegistry.name)
+
+    NpmRegistry(String name = 'npm', Logger logger = null,
+                String url = DEFAULT_NPM_URL, List<String> configFiles = DEFAULT_NPM_FILENAMES) {
+        super(name, logger ?: NpmRegistry.LOGGER, url, configFiles, [NpmResolver])
     }
 
     @Override
@@ -55,8 +51,7 @@ class NpmRegistry extends AbstractRegistry implements Registry {
             ((json.dependencies ?: [:]) + (json.peerDependencies ?: [:])).collect { String name, String version ->
                 new SimpleDependency(name: name, versionExpression: version)
             }
-        }
-        else {
+        } else {
             []
         }
     }
@@ -70,8 +65,7 @@ class NpmRegistry extends AbstractRegistry implements Registry {
             log.info "Loading ${dependency} from ${cacheFilePath}"
             extractTarball(cacheFile, dependency.sourceDir)
             true
-        }
-        else {
+        } else {
             false
         }
     }
@@ -100,8 +94,7 @@ class NpmRegistry extends AbstractRegistry implements Registry {
         if (cacheFile.exists()) {
             log.info "Loading info for ${dependency} from ${cacheFile.absolutePath}"
             new JsonSlurper().parse(cacheFile) as Map
-        }
-        else {
+        } else {
             null
         }
     }

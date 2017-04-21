@@ -1,10 +1,10 @@
-package com.craigburke.gradle.client.registry.bower
+package com.craigburke.clientdependencies.api.registry.bower
 
-import com.craigburke.gradle.client.dependency.Dependency
-import com.craigburke.gradle.client.dependency.Version
-import com.craigburke.gradle.client.registry.core.DependencyResolveException
-import com.craigburke.gradle.client.registry.core.GithubCredentials
-import com.craigburke.gradle.client.registry.core.Resolver
+import com.craigburke.clientdependencies.api.dependency.Dependency
+import com.craigburke.clientdependencies.api.dependency.Version
+import com.craigburke.clientdependencies.api.registry.core.DependencyResolveException
+import com.craigburke.clientdependencies.api.registry.core.GithubCredentials
+import com.craigburke.clientdependencies.api.registry.core.Resolver
 import groovy.json.JsonSlurper
 import org.slf4j.Logger
 

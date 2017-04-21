@@ -1,8 +1,8 @@
 package com.craigburke.gradle.client.plugin
 
-import com.craigburke.gradle.client.registry.bower.BowerRegistry
-import com.craigburke.gradle.client.registry.core.Registry
-import com.craigburke.gradle.client.registry.npm.NpmRegistry
+import com.craigburke.clientdependencies.api.registry.bower.BowerRegistry
+import com.craigburke.clientdependencies.api.registry.core.Registry
+import com.craigburke.clientdependencies.api.registry.npm.NpmRegistry
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
 import org.junit.Rule
@@ -73,7 +73,7 @@ class ClientDependenciesExtensionSpec extends Specification {
 
     def "default copy closure is returned when it's specified"() {
         setup:
-        extension.defaultCopy = myDefaultCopy
+        extension.config.defaultCopy = myDefaultCopy
 
         expect:
         extension.copyConfig == myDefaultCopy

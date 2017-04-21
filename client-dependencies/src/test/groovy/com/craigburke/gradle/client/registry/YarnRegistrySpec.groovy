@@ -1,6 +1,6 @@
 package com.craigburke.gradle.client.registry
 
-import com.craigburke.gradle.client.registry.npm.YarnRegistry
+import com.craigburke.clientdependencies.api.registry.npm.YarnRegistry
 
 class YarnRegistrySpec extends AbstractRegistrySpec {
 

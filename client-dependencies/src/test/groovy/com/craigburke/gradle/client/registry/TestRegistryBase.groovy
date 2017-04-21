@@ -1,9 +1,9 @@
 package com.craigburke.gradle.client.registry
 
-import com.craigburke.gradle.client.dependency.Dependency
-import com.craigburke.gradle.client.dependency.SimpleDependency
-import com.craigburke.gradle.client.registry.core.AbstractRegistry
-import com.craigburke.gradle.client.registry.core.Resolver
+import com.craigburke.clientdependencies.api.dependency.Dependency
+import com.craigburke.clientdependencies.api.dependency.SimpleDependency
+import com.craigburke.clientdependencies.api.registry.core.AbstractRegistry
+import com.craigburke.clientdependencies.api.registry.core.Resolver
 
 /**
  *
