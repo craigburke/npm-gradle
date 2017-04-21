@@ -1,4 +1,3 @@
-import groovy.io.FileType
 
 buildscript {
     repositories {
@@ -12,148 +11,123 @@ buildscript {
     }
 }
 
-apply plugin: 'groovy'
-apply plugin: 'maven-publish'
-apply plugin: 'idea'
-apply plugin: 'codenarc'
-apply plugin: 'com.gradle.plugin-publish'
-apply plugin: 'com.jfrog.bintray'
-
-ext {
-    artifactId = 'client-dependencies'
-    githubUrl = 'https://github.com/craigburke/client-dependencies-gradle'
-}
-
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
 group = 'com.craigburke.gradle'
-version = '1.4.0'
-
-repositories {
-    jcenter()
-}
-
-dependencies {
-    compile localGroovy()
-    compile gradleApi()
-    compile 'org.codehaus.gpars:gpars:1.2.1'
-    compile 'org.ajoberstar:grgit:1.5.0'
-    testCompile('org.spockframework:spock-core:1.0-groovy-2.3') {
-        exclude module: 'groovy-all'
-    }
-    testCompile 'com.github.tomakehurst:wiremock:1.58:standalone'
-}
-
-codenarc {
-    toolVersion = '0.25.1'
-    configFile = file("${rootProject.projectDir}/config/codenarc/rules.groovy")
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifactId project.artifactId
-            pom.withXml {
-                asNode().children().last() + {
-                    resolveStrategy = Closure.DELEGATE_FIRST
-                    name project.artifactId
-                    description project.description
-                    url project.githubUrl
-                    scm {
-                        url project.githubUrl
-                        connection "scm:${project.githubUrl}.git"
-                        developerConnection "scm:${project.githubUrl}.git"
-                    }
-                    licenses {
-                        license {
-                            name 'The Apache Software License, Version 2.0'
-                            url 'http://www.apache.org/license/LICENSE-2.0.txt'
-                            distribution 'repo'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id 'craigburke'
-                            name 'Craig Burke'
-                            email 'craig@craigburke.com'
-                        }
-                    }
-                }
-            }
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-        }
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUsername') ? project.bintrayUsername : ''
-    key = project.hasProperty('bintrayApiKey') ? project.bintrayApiKey : ''
-    publications = ['maven']
-    publish = true
-
-    pkg {
-        repo = 'gradle'
-        userOrg = 'craigburke'
-        name = project.artifactId
-        githubRepo = 'craigburke/client-dependencies-gradle'
-        githubReleaseNotesFile = 'README.adoc'
-        version {
-            mavenCentralSync {
-                user = project.hasProperty('mavenCentralUsername') ? project.mavenCentralUsername : ''
-                password = project.hasProperty('mavenCentralPassword') ? project.mavenCentralPassword : ''
-            }
-        }
-    }
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from 'build/docs/javadoc'
-}
-
-pluginBundle {
-    website = project.githubUrl
-    vcsUrl = project.githubUrl
-    description = 'Install client side dependencies from NPM or Bower by declaring dependencies in build.gradle.'
-    tags = ['npm', 'bower', 'client', 'web']
-
-    plugins {
-        clientDependencies {
-            id = 'com.craigburke.client-dependencies'
-            displayName = 'Client Dependencies Plugin'
-        }
-    }
-}
-
-task fixResourcePaths() {
-    doLast {
-        List<File> gitFolders = []
-
-        project.file("build/resources/test/").eachFileRecurse(FileType.DIRECTORIES) {
-            if (it.name == '_git') {
-                gitFolders += it
-            }
-        }
-
-        gitFolders.each {
-            it.renameTo(it.absolutePath.replaceAll('_git', '.git'))
-        }
-
-    }
-}
-
-processTestResources.finalizedBy 'fixResourcePaths'
-
-task('release', dependsOn: ['bintrayUpload', 'publishPlugins'])
+version = '1.4.1-SNAPSHOT'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.0'
 }
+ext {
+    githubUrl = 'https://github.com/craigburke/client-dependencies-gradle'
+}
+
+subprojects{
+    apply plugin: 'groovy'
+    apply plugin: 'maven-publish'
+    apply plugin: 'idea'
+    apply plugin: 'com.gradle.plugin-publish'
+    apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'codenarc'
+
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+    
+    project.group = rootProject.group
+    project.version = rootProject.version
+
+    repositories {
+        jcenter()
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                pom.withXml {
+                    asNode().children().last() + {
+                        resolveStrategy = Closure.DELEGATE_FIRST
+//                        name project.artifactId
+                        description project.description
+                        url project.githubUrl
+                        scm {
+                            url project.githubUrl
+                            connection "scm:${project.githubUrl}.git"
+                            developerConnection "scm:${project.githubUrl}.git"
+                        }
+                        licenses {
+                            license {
+                                name 'The Apache Software License, Version 2.0'
+                                url 'http://www.apache.org/license/LICENSE-2.0.txt'
+                                distribution 'repo'
+                            }
+                        }
+                        developers {
+                            developer {
+                                id 'craigburke'
+                                name 'Craig Burke'
+                                email 'craig@craigburke.com'
+                            }
+                        }
+                    }
+                }
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+            }
+        }
+    }
+    codenarc {
+        toolVersion = '0.25.1'
+        configFile = file("${rootProject.projectDir}/config/codenarc/rules.groovy")
+    }
+    bintray {
+        user = project.hasProperty('bintrayUsername') ? project.bintrayUsername : ''
+        key = project.hasProperty('bintrayApiKey') ? project.bintrayApiKey : ''
+        publications = ['maven']
+        publish = true
+
+        pkg {
+            repo = 'gradle'
+            userOrg = 'craigburke'
+            githubRepo = 'craigburke/client-dependencies-gradle'
+            githubReleaseNotesFile = 'README.adoc'
+            version {
+                mavenCentralSync {
+                    user = project.hasProperty('mavenCentralUsername') ? project.mavenCentralUsername : ''
+                    password = project.hasProperty('mavenCentralPassword') ? project.mavenCentralPassword : ''
+                }
+            }
+        }
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from 'build/docs/javadoc'
+    }
+
+    pluginBundle {
+        website = project.githubUrl
+        vcsUrl = project.githubUrl
+        description = 'Install client side dependencies from NPM or Bower by declaring dependencies in build.gradle.'
+        tags = ['npm', 'bower', 'client', 'web']
+
+        plugins {
+            clientDependencies {
+                id = 'com.craigburke.client-dependencies'
+                displayName = 'Client Dependencies Plugin'
+            }
+        }
+    }
+
+
+
+    task('release', dependsOn: ['bintrayUpload', 'publishPlugins'])
+
+}
+
+
+
