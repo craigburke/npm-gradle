@@ -1,0 +1,8 @@
+dependencies {
+    compile localGroovy()
+    compile gradleApi()
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
+    
+    compile 'org.codehaus.gpars:gpars:1.2.1'
+    compile 'org.ajoberstar:grgit:1.5.0'    
+}
