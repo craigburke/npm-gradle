@@ -96,7 +96,7 @@ class Version implements Comparable<Version>, Cloneable {
                     result = 1
                 }
                 else if (part != otherPart) {
-                    if (part.isNumber() && otherPart?.isNumber()) {
+                    if (part.isInteger() && otherPart?.isInteger()) {
                         result = Integer.valueOf(part) <=> Integer.valueOf(otherPart)
                     }
                     else {

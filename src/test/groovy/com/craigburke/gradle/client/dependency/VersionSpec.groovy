@@ -228,6 +228,7 @@ class VersionSpec extends Specification {
         '1.2.3-a.b.c.10.d.5' | '1.2.3-a.b.c.5.d.100'
         '1.2.3-r2'           | '1.2.3-r100'
         '1.2.3-r100'         | '1.2.3-R2'
+        '1.2.3-foo.10e1'     | '1.2.3-foo.100'
     }
 
     @Unroll
@@ -278,6 +279,7 @@ class VersionSpec extends Specification {
         '1.2.3-beta+build' | '1.2.3-beta+otherbuild'
         '1.2.3+build'      | '1.2.3+otherbuild'
         '  v1.2.3+build'   | '1.2.3+otherbuild'
+        '1.2.3-foo.10e1'   | '1.2.3-foo.10e1'
     }
 
 }
